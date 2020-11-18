@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "xmas_lights"
+version = "0.1.0"
+description = "Program to control Xmas Lights for my house"
+authors = ["Clayton Franklin <clayton.j.franklin@nevada.unr.edu"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+adafruit-circuitpython-neopixel = "^6.0.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+pylint = "^2.6.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
