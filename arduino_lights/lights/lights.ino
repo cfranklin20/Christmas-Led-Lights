@@ -37,10 +37,19 @@ Argument Definition:
 const uint32_t colors[5] = 
 {
     upperStrand.Color(255,  0,      0),     // Red
-    upperStrand.Color(0,    255,    0),     // Blue
-    upperStrand.Color(0,    0,      255),   // Green
+    upperStrand.Color(0,    255,    0),     // Green
+    upperStrand.Color(0,    0,      255),   // Blue
     upperStrand.Color(255,  165,    0),     // Orange
     upperStrand.Color(127,  127,    127)    // White (Half Brightness)
+};
+
+const uint8_t rgbValues[5][3] = 
+{
+    {255,   0,      0},     // Red
+    {0,     255,    0},     // Green
+    {0,     0,      255},   // Blue
+    {255,   165,    0},     // Orange
+    {127,   127,    127}    // White (Half Brightness)
 };
 
 // Setup for the main loop
@@ -54,7 +63,7 @@ void setup()
     lowerStrand.show();
     // Set brightness of LEDs on strands
     upperStrand.setBrightness(LED_BRIGHTNESS);
-
+    lowerStrand.setBrightness(LED_BRIGHTNESS);
     // Define an array of colors
 }
 
@@ -62,9 +71,14 @@ void setup()
 void loop() 
 {
     //colorWipe(upperStrand.Color(255, 0, 0), 10);
-    twinkleLights(colors, 10, LOWER_LED_COUNT, false);
+    twinkleLights(colors, 5, LOWER_LED_COUNT, false);
     clear();
-    runningLights(127, 127, 127, 1);
+    for (int i = 0; i < 5; i++)
+    {
+        runningLights(rgbValues[i], 0);
+    }
+    clear();
+    theaterChase(colors[2], 50);
     clear();
 }
 
@@ -88,14 +102,15 @@ void colorWipe(uint32_t color, int wait)
 }
 
 /*************************************************
-Function twinkleLights(color, wait, number, onlyOne)
-Argument Definition:
-    Arg 1: color to make the strip
-    Arg 2: delay between individual pixels
-    Arg 3: number of LEDs to light up in one round
-    Arg 4: only see one LED at a time
+twinkleLights(color, wait, number, onlyOne)
+@brief Twinkle random lights in the strip with colors passed in
+
+@param color Array of colors to make the strip
+@param wait The delay between individual pixels
+@param number The number of LEDs to light up in one round
+@param onlyOne Set only one LED at a time
 *************************************************/
-void twinkleLights(const uint32_t* color, int wait, int number, bool onlyOne)
+void twinkleLights(const uint32_t color[], int wait, int number, bool onlyOne)
 {
     upperStrand.clear();
     lowerStrand.clear();
@@ -115,25 +130,24 @@ void twinkleLights(const uint32_t* color, int wait, int number, bool onlyOne)
 }
 
 /*************************************************
-Function twinkleLights(red, green, blue, wait)
-Argument Definition:
-    Arg 1: Red value for the strip
-    Arg 2: Green value for the strip
-    Arg 3: Blue value for the strip 
-    Arg 4: wait time in ms (milliseconds) 
-*************************************************/
-void runningLights(uint8_t red, uint8_t green, uint8_t blue, int wait)
-{
-    int position = 0;
+runningLights(colors, wait)
+@brief Animate a running of lights across the strip
 
-    for (int j = 0; j < 100; j++)
+@param colors A 2D array of RGB brightness values, 0 to 255
+@param wait The wait time between runs in milliseconds
+*************************************************/
+void runningLights(const uint8_t colors[3], int wait)
+{
+    int position = 50;
+
+    for (int j = 0; j < 50; j++)
     {
-        position++;
-        for (int i = 0; i < LOWER_LED_COUNT; i++)
+        position--;
+        for (int i = LOWER_LED_COUNT; i > 0; i--)
         {
-            uint8_t redCalc = ((sin(i + position) * 127 + 128) / 255) * red;
-            uint8_t greenCalc = ((sin(i + position) * 127 + 128) / 255) * green;
-            uint8_t blueCalc = ((sin(i + position) * 127 + 128) / 255) * blue;
+            uint8_t redCalc = ((sin(i + position) * 127 + 128) / 255) * colors[0];
+            uint8_t greenCalc = ((sin(i + position) * 127 + 128) / 255) * colors[1];
+            uint8_t blueCalc = ((sin(i + position) * 127 + 128) / 255) * colors[2];
             upperStrand.setPixelColor(i, upperStrand.Color(redCalc, greenCalc, blueCalc));
             lowerStrand.setPixelColor(i, lowerStrand.Color(redCalc, greenCalc, blueCalc));
         }
@@ -152,7 +166,7 @@ Argument Definition:
 void theaterChase(uint32_t color, int wait) 
 {   
     // Repeat 10 times...
-    for(int a = 0; a < 10; a++) 
+    for(int a = 0; a < 50; a++) 
     {
         // 'b' counts from 0 to 2...
         for(int b = 0; b < 3; b++) 
