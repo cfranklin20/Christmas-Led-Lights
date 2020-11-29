@@ -20,7 +20,7 @@
 #define LED_PIN    6
 
 // How many NeoPixels are attached to the Arduino?
-#define LED_COUNT 150
+#define LED_COUNT 487
 
 // Declare our NeoPixel strip object:
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
@@ -46,7 +46,7 @@ void setup() {
 
   strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
   strip.show();            // Turn OFF all pixels ASAP
-  strip.setBrightness(128); // Set BRIGHTNESS to about 1/5 (max = 255)
+  strip.setBrightness(255); // Set BRIGHTNESS to about 1/5 (max = 255)
 }
 
 
@@ -54,18 +54,22 @@ void setup() {
 
 void loop() {
   // Fill along the length of the strip in various colors...
-  colorWipe(strip.Color(255,   0,   0), 50); // Red
-  colorWipe(strip.Color(  0, 255,   0), 50); // Green
-  colorWipe(strip.Color(  0,   0, 255), 50); // Blue
+  colorWipe(strip.Color(255,   0,   0), 10); // Red
+  colorWipe(strip.Color(  0, 255,   0), 10); // Green
+  colorWipe(strip.Color(  0,   0, 255), 10); // Blue
 
   // Do a theater marquee effect in various colors...
-  theaterChase(strip.Color(127, 127, 127), 50); // White, half brightness
-  theaterChase(strip.Color(127,   0,   0), 50); // Red, half brightness
-  theaterChase(strip.Color(  0,   0, 127), 50); // Blue, half brightness
+  theaterChase(strip.Color(255, 255, 255), 50); // White, half brightness
+  theaterChase(strip.Color(255,   0,   0), 50); // Red, half brightness
+  theaterChase(strip.Color(  0,   0, 255), 50); // Blue, half brightness
+  theaterChase(strip.Color(  0, 255,   0), 50); // Green, half brightness
+  theaterChase(strip.Color(255, 255,   0), 50); // Yellow, half brightness
+  // theaterChase(strip.Color(  ,   , ), 50); // Blue, half brightness
   // alternateColor();
-  rainbow(10);             // Flowing rainbow cycle along the whole strip
-  theaterChaseRainbow(50); // Rainbow-enhanced theaterChase variant
+  // rainbow(10);             // Flowing rainbow cycle along the whole strip
+  // theaterChaseRainbow(50); // Rainbow-enhanced theaterChase variant
   // colorWipe(strip.Color(0, 0, 0), 50); // White
+  strip.clear(); // Clear strip to start again
 }
 
 
@@ -141,7 +145,7 @@ void rainbow(int wait) {
 // Rainbow-enhanced theater marquee. Pass delay time (in ms) between frames.
 void theaterChaseRainbow(int wait) {
   int firstPixelHue = 0;     // First pixel starts at red (hue 0)
-  for(int a=0; a<30; a++) {  // Repeat 30 times...
+  for(int a=0; a<90; a++) {  // Repeat 30 times...
     for(int b=0; b<3; b++) { //  'b' counts from 0 to 2...
       strip.clear();         //   Set all pixels in RAM to 0 (off)
       // 'c' counts up from 'b' to end of strip in increments of 3...
