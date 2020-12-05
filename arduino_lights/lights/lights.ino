@@ -39,16 +39,15 @@ const uint32_t colors[5] =
     upperStrand.Color(255,  0,      0),     // Red
     upperStrand.Color(0,    255,    0),     // Green
     upperStrand.Color(0,    0,      255),   // Blue
-    upperStrand.Color(255,  165,    0),     // Orange
-    upperStrand.Color(127,  127,    127)    // White (Half Brightness)
+    upperStrand.Color(127,  127,    127),   // White (Half Brightness)
+    upperStrand.Color(255,  165,    0)     // Orange
 };
 
-const uint8_t rgbValues[5][3] = 
+const uint8_t rgbValues[4][3] = 
 {
     {255,   0,      0},     // Red
     {0,     255,    0},     // Green
     {0,     0,      255},   // Blue
-    {255,   165,    0},     // Orange
     {127,   127,    127}    // White (Half Brightness)
 };
 
@@ -73,12 +72,17 @@ void loop()
     //colorWipe(upperStrand.Color(255, 0, 0), 10);
     twinkleLights(colors, 5, LOWER_LED_COUNT, false);
     clear();
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 4; i++)
     {
         runningLights(rgbValues[i], 0);
     }
     clear();
-    theaterChase(colors[2], 50);
+    rgbLoop();
+    clear();
+    for (int i = 0; i < 4; i++)
+    {
+        theaterChase(colors[i], 50);
+    }
     clear();
 }
 
@@ -116,8 +120,8 @@ void twinkleLights(const uint32_t color[], int wait, int number, bool onlyOne)
     lowerStrand.clear();
     for (int i = 0; i < number; i++)
     {
-        upperStrand.setPixelColor(random(UPPER_LED_COUNT), color[i % 5]);
-        lowerStrand.setPixelColor(random(LOWER_LED_COUNT), color[i % 5]);
+        upperStrand.setPixelColor(random(UPPER_LED_COUNT), color[i % 4]);
+        lowerStrand.setPixelColor(random(LOWER_LED_COUNT), color[i % 4]);
         upperStrand.show();
         lowerStrand.show();
         delay(wait);
@@ -143,25 +147,25 @@ void runningLights(const uint8_t colors[3], int wait)
     for (int j = 0; j < 50; j++)
     {
         position--;
-        for (int i = LOWER_LED_COUNT; i > 0; i--)
+        for (int i = 0; i < LOWER_LED_COUNT; i++)
         {
             uint8_t redCalc = ((sin(i + position) * 127 + 128) / 255) * colors[0];
             uint8_t greenCalc = ((sin(i + position) * 127 + 128) / 255) * colors[1];
             uint8_t blueCalc = ((sin(i + position) * 127 + 128) / 255) * colors[2];
-            upperStrand.setPixelColor(i, upperStrand.Color(redCalc, greenCalc, blueCalc));
             lowerStrand.setPixelColor(i, lowerStrand.Color(redCalc, greenCalc, blueCalc));
+            upperStrand.setPixelColor(i, upperStrand.Color(redCalc, greenCalc, blueCalc));
         }
-        upperStrand.show();
-        lowerStrand.show();
+        showStrip();
         delay(wait);
     }
 }
 
 /*************************************************
-Function theaterChase(color, wait)
-Argument Definition:
-    Arg 1: Color value for the strip
-    Arg 2: wait time for marquee
+theaterChase(color, wait)
+@brief Run lights like a movie theater marquee
+
+@param color Color value for the strip
+@param wait Wait time for marquee
 *************************************************/
 void theaterChase(uint32_t color, int wait) 
 {   
@@ -187,10 +191,61 @@ void theaterChase(uint32_t color, int wait)
     }
 }
 
+/*************************************************
+rgbLoop()
+@brief Fade in and out RGB strip lights
+*************************************************/
+
+void rgbLoop()
+{
+    for(int j = 0; j < 3; j++ ) 
+    {
+        // Fade IN
+        for(int k = 0; k < 256; k+=5) {
+            switch(j) 
+            {
+                case 0: setAll(k,0,0); break;
+                case 1: setAll(0,k,0); break;
+                case 2: setAll(0,0,k); break;
+            }
+            showStrip();
+            //delay(3);
+        }
+        // Fade OUT
+        for(int k = 255; k >= 0; k-=5) 
+        {
+            switch(j) 
+            {
+                case 0: setAll(k,0,0); break;
+                case 1: setAll(0,k,0); break;
+                case 2: setAll(0,0,k); break;
+            }
+            showStrip();
+            //delay(3);
+        }
+    }
+}
+
 // Helper Functions
 
 void clear()
 {
     upperStrand.clear();
     lowerStrand.clear();
+}
+
+void setAll(uint8_t red, uint8_t green, uint8_t blue)
+{
+    for(int i = 0; i < LOWER_LED_COUNT; i++) 
+    {
+        lowerStrand.setPixelColor(i, red, green, blue);
+        upperStrand.setPixelColor(i, red, green, blue);
+    }
+  //showStrip();
+}
+
+void showStrip()
+{
+    upperStrand.show();
+    lowerStrand.show();
 }
